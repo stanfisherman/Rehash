@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home_page"
+            android:icon="@drawable/ic_menu_home"
+            android:title="Home Page" />
+        <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_menu_calendar"
+            android:title="Calendar" />
+        <item
+            android:id="@+id/nav_alarm"
+            android:icon="@drawable/ic_menu_alarm"
+            android:title="Alarm" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="Settings" />
+    </group>
+
+
+</menu>
