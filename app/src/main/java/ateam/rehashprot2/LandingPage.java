@@ -1,6 +1,7 @@
 package ateam.rehashprot2;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -8,10 +9,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
+
+import dalvik.system.DexClassLoader;
 
 public class LandingPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,6 +34,8 @@ public class LandingPage extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
 
+        getStatechart();
+        instanciateStatechart();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -109,5 +121,90 @@ public class LandingPage extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    public void getStatechart() {
+        //gets firebase instance and sets up the firebase urls for download
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://test-d93ae.appspot.com");
+        StorageReference testRef = storageRef.child("statechart.apk");
+
+        //create a temporary file object to hold the downloaded apk
+        final File localFile = new File(getFilesDir().toString() + "/statechart.apk");
+
+        //if file doesn't exist create the file
+        if (!localFile.exists()) {
+            try {
+                localFile.createNewFile();
+            } catch (IOException e) {
+                Log.e("LandingPage", "File couldn't be created");
+            }
+
+            //starts the download
+            testRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.i("LandingPage", "File downloaded");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.e("LandingPage", "File download failed");
+                }
+            });
+        }
+
+    }
+
+    public void instanciateStatechart() {
+        final File localFile = new File(getFilesDir().toString() + "/statechart.apk");
+
+        //if file doesn't exist create the file
+        if (!localFile.exists()) {
+            //initialise the class loader, for dynamic class loading
+            DexClassLoader cl = new DexClassLoader(localFile.getAbsolutePath().toString(), getFilesDir().getAbsolutePath().toString(), null, getClassLoader());
+
+            //loads the statechart classes
+            Class<Object> defaultSMStatemachine = null;
+            Class<Object> iDefaultSMStatemachine = null;
+            Class<Object> iStatemachine = null;
+            try {
+                defaultSMStatemachine = (Class<Object>) cl.loadClass("ateam.defaultSMStatemachine");
+                iDefaultSMStatemachine = (Class<Object>) cl.loadClass("ateam.iDefaultSMStatemchine");
+                iStatemachine = (Class<Object>) cl.loadClass("ateam.iStatemchine");
+            } catch (ClassNotFoundException e) {
+                Log.e("LandingPage", "statechart classes weren't loaded");
+                e.printStackTrace();
+            }
+
+            //attempts to instanciate the statechart objects
+            Object defaultInstance = null;
+            Object iDefaultInstance = null;
+            Object iStatemachineInstance = null;
+            try {
+                defaultInstance = defaultSMStatemachine.newInstance();
+                iDefaultInstance = iDefaultSMStatemachine.newInstance();
+                iStatemachineInstance = iStatemachine.newInstance();
+            } catch (InstantiationException e) {
+                Log.e("LandingPage", "Couldn't instantiate statechart objects");
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                Log.e("LandingPage", "Illegal access, statechart objects weren't created");
+                e.printStackTrace();
+            }
+
+            //access fields and methods
+//            Field field = null;
+//            try {
+//                field = defaultSMStatemachine.getDeclaredField("store");
+//            } catch (NoSuchFieldException e) {
+//                e.printStackTrace();
+//            }
+//            field.setAccessible(true);
+//            String value = "replace";
+//            try {
+//                value = (String) field.get(instance);
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+        }
     }
 }
