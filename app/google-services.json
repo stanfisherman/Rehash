@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "461035630079",
+    "firebase_url": "https://test-d93ae.firebaseio.com",
+    "project_id": "test-d93ae",
+    "storage_bucket": "test-d93ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461035630079:android:87e203d57dbcd43e",
+        "android_client_info": {
+          "package_name": "com.example.stanton.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461035630079-lrde287qgmk2cn56kod4rkkfc5rgnl6b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG6zbicbmjFEaZ-VHoPF25Hx_a4fA2FHI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461035630079:android:d513f3f519930671",
+        "android_client_info": {
+          "package_name": "ateam.rehashprot2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461035630079-lrde287qgmk2cn56kod4rkkfc5rgnl6b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG6zbicbmjFEaZ-VHoPF25Hx_a4fA2FHI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
