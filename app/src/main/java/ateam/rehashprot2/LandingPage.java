@@ -10,9 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-<<<<<<< HEAD
-import android.view.MenuItem;
-=======
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -26,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 
 import dalvik.system.DexClassLoader;
->>>>>>> origin/master
 
 public class LandingPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
