@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ateam.rehashprot2">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_logo"
@@ -18,6 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".CalendarPage"
+            android:parentActivityName=".LandingPage" />
+        <activity
+            android:name=".WeatherActivity"
+            android:label="@string/title_activity_weather"
+            android:parentActivityName=".LandingPage"
+            ></activity>
     </application>
 
 </manifest>

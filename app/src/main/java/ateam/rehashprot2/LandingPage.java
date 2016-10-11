@@ -1,5 +1,6 @@
 package ateam.rehashprot2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -9,6 +10,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+<<<<<<< HEAD
+import android.view.MenuItem;
+=======
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -22,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 
 import dalvik.system.DexClassLoader;
+>>>>>>> origin/master
 
 public class LandingPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -110,11 +115,14 @@ public class LandingPage extends AppCompatActivity
         if (id == R.id.nav_home_page) {
             // Handle the home action
         } else if (id == R.id.nav_calendar) {
-
+            Intent intent = new Intent(LandingPage.this, CalendarPage.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_weather) {
+            Intent intent = new Intent(LandingPage.this, WeatherActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_alarm) {
 
         } else if (id == R.id.nav_settings) {
-
 
         }
 
