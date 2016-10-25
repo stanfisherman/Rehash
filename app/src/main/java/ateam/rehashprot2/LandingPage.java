@@ -27,16 +27,13 @@ import dalvik.system.DexClassLoader;
 public class LandingPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    // Array of strings...
-    String[] mobileArray = {"Placeholder1","Placeholder2","Placeholder3","Placeholder4","Placeholder5","Placeholder6","Placeholder7"};
+    private int fragmentInt = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
 
-        getStatechart();
-        instanciateStatechart();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,24 +46,15 @@ public class LandingPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        ArrayAdapter list_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mobileArray);
-//        ListView lpListView = (ListView) findViewById(R.id.list_view);
-//        lpListView.setAdapter(list_adapter);
-
         //*************FRAGMENT MANAGEMENT******************
+
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
-        ft.replace(R.id.fragment_frame_layout, new CounterFragment());
-        //ft.add(R.id.fragment_frame_layout, new CounterFragment());
+        ft.replace(R.id.fragment_frame_layout, new ListViewFragment());
         // Complete the changes added above
         ft.commit();
-    }
 
-    //To add items to the list view
-    public void addListItems()
-    {
-        //mobileArray
     }
 
     @Override
