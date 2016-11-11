@@ -1,11 +1,10 @@
 package ateam.rehashprot2;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +15,9 @@ import ateam.rehashprot2.data.Item;
 import ateam.rehashprot2.service.WeatherService;
 import ateam.rehashprot2.service.WeatherServiceCallback;
 
+/**
+ * Created by Warrick
+ */
 public class WeatherActivity extends AppCompatActivity implements WeatherServiceCallback {
 
     private ImageView weatherIconImageView;
@@ -30,26 +32,23 @@ public class WeatherActivity extends AppCompatActivity implements WeatherService
     // weather service fail flag
     private boolean weatherServicesHasFailed = false;
 
-    private SharedPreferences preferences = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
-        setTitle("Rehash");
+        setTitle("ReHash: Current Weather");
 
         weatherIconImageView = (ImageView) findViewById(R.id.weatherIconImageView);
         temperatureTextView = (TextView) findViewById(R.id.temperatureTextView);
         conditionTextView = (TextView) findViewById(R.id.conditionTextView);
         locationTextView = (TextView) findViewById(R.id.locationTextView);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         service = new WeatherService(this);
         dialog = new ProgressDialog(this);
         dialog.setMessage("Loading...");
         dialog.show();
         service.refreshWeather("Auckland, NZ");
+
 
     }
 
@@ -59,6 +58,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherService
         dialog.dismiss();
 
         Condition condition = channel.getItem().getCondition();
+
+        Log.e("Code", " " + condition.getCode());
 
         Item item = channel.getItem();
 

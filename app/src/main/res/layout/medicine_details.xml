@@ -40,14 +40,58 @@
         android:layout_below="@id/medDetailsDesc"
         android:layout_centerHorizontal="true"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/notifyText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+    </RelativeLayout>
+
     <ToggleButton
         android:text="ToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/notifyButton"
         android:layout_below="@+id/notifyText"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignLeft="@+id/medDetailsImg"
+        android:layout_alignStart="@+id/medDetailsImg" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/notifyButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:layout_centerHorizontal="false"
+            android:layout_centerInParent="false"
+            android:layout_centerVertical="true" />
+
+        <Button
+            android:layout_alignParentRight="true"
+            android:id="@+id/module_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:background="@android:color/transparent" />
+
+        <Button
+            android:id="@+id/module_start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="01/01/2016"
+            android:background="@android:color/transparent"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/module_start_time"
+            android:layout_toStartOf="@+id/module_start_time" />
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

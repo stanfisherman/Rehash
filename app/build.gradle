@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "ateam.rehashprot2"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -25,13 +25,14 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:support-v4:24.2.1'
     compile 'com.google.firebase:firebase-core:9.4.0'
     compile 'com.google.firebase:firebase-database:9.4.0'
     compile 'com.google.firebase:firebase-storage:9.4.0'
     compile 'com.google.firebase:firebase-auth:9.4.0'
     compile 'com.google.android.gms:play-services:9.4.0'
-    compile "com.crittercism.dexmaker:dexmaker:1.4"
-    compile "com.crittercism.dexmaker:dexmaker-dx:1.4"
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.github.alamkanak:android-week-view:1.2.6'

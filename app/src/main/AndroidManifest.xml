@@ -6,16 +6,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".Rehash"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LandingPage"
+            android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,13 +23,29 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".LandingPage"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".LoginActivity" />
+        <activity
+            android:name=".AddEventActivity"
+            android:parentActivityName=".CalendarPage" />
+        <activity
+            android:name=".ViewEventActivity"
+            android:parentActivityName=".CalendarPage" />
+        <activity
             android:name=".CalendarPage"
             android:parentActivityName=".LandingPage" />
         <activity
+            android:name=".RegisterActivity"
+            android:parentActivityName=".LoginActivity" />
+        <activity
             android:name=".WeatherActivity"
             android:label="@string/title_activity_weather"
+            android:screenOrientation="portrait"
             android:parentActivityName=".LandingPage"
             ></activity>
+        <receiver android:name=".Receiver"/>
     </application>
 
 </manifest>

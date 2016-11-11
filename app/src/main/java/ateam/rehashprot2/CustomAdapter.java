@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- *
+ * Created by Warrick
  */
 public class CustomAdapter extends ArrayAdapter {
     private Activity activity;

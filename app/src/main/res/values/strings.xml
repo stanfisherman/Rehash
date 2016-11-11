@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Rehash</string>
+    <string name="app_name">ReHash</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -10,4 +10,10 @@
     <string name="condition">Condition</string>
     <string name="location">Location</string>
     <string name="temperature_output">%1$d&#176;%2$s</string>
+    <string name="make_event">Create Event</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login_text">Log In</string>
+    <string name="register_text">Register</string>
+    <string name="display_name">Display Name</string>
 </resources>

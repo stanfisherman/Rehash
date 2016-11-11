@@ -1,8 +1,12 @@
 package ateam.rehashprot2;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -10,29 +14,44 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Calendar;
 
-import dalvik.system.DexClassLoader;
+import ateam.rehashprot2.data.Channel;
+import ateam.rehashprot2.data.Condition;
+import ateam.rehashprot2.service.WeatherService;
+import ateam.rehashprot2.service.WeatherServiceCallback;
 
 public class LandingPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        WeatherServiceCallback {
 
     private int fragmentInt = 0;
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
+    private FirebaseDatabase database;
+    private FirebaseAuth mAuth;
+    private static Condition condition;
+    private static WeatherService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+        mAuth = FirebaseAuth.getInstance();
+        service = new WeatherService(this);
+        service.refreshWeather("Auckland, NZ");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,14 +65,41 @@ public class LandingPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //*************FRAGMENT MANAGEMENT******************
+        View header = navigationView.getHeaderView(0);
+        final TextView userNameTV = (TextView) header.findViewById(R.id.username_header);
+        final TextView emailTV = (TextView) header.findViewById(R.id.email_header);
 
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(mAuth.getCurrentUser().getUid());
+
+        myRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+                        String displayName = dataSnapshot.child("display").getValue().toString();
+                        String disPlayEmail = dataSnapshot.child("email").getValue().toString();
+                        userNameTV.setText(displayName);
+                        emailTV.setText(disPlayEmail);
+                        // ...
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+        //*************FRAGMENT MANAGEMENT******************
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
-        ft.replace(R.id.fragment_frame_layout, new ListViewFragment());
+        ft.replace(R.id.fragment_frame_layout, new ListViewFragment(), "ListView");
         // Complete the changes added above
         ft.commit();
+
+
+
 
     }
 
@@ -97,106 +143,64 @@ public class LandingPage extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home_page) {
-            // Handle the home action
+            Intent intent = new Intent(LandingPage.this, LandingPage.class);
+            startActivity(intent);
         } else if (id == R.id.nav_calendar) {
             Intent intent = new Intent(LandingPage.this, CalendarPage.class);
             startActivity(intent);
         } else if (id == R.id.nav_weather) {
             Intent intent = new Intent(LandingPage.this, WeatherActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_alarm) {
-
-        } else if (id == R.id.nav_settings) {
-
+        } else if (id == R.id.nav_logout) {
+            Intent intent = new Intent(LandingPage.this, LoginActivity.class);
+            startActivity(intent);
+            mAuth.signOut();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    public void getStatechart() {
-        //gets firebase instance and sets up the firebase urls for download
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://test-d93ae.appspot.com");
-        StorageReference testRef = storageRef.child("statechart.apk");
 
-        //create a temporary file object to hold the downloaded apk
-        final File localFile = new File(getFilesDir().toString() + "/statechart.apk");
-
-        //if file doesn't exist create the file
-        if (!localFile.exists()) {
-            try {
-                localFile.createNewFile();
-            } catch (IOException e) {
-                Log.e("LandingPage", "File couldn't be created");
-            }
-
-            //starts the download
-            testRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Log.i("LandingPage", "File downloaded");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Log.e("LandingPage", "File download failed");
-                }
-            });
-        }
-
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void setAlarm(Calendar time, int id, String module) {
+        WeatherService service = new WeatherService(this);
+        alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, Receiver.class);
+        intent.putExtra("Module", module);
+        intent.putExtra("Id", id);
+        alarmIntent = PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), alarmIntent);
     }
 
-    public void instanciateStatechart() {
-        final File localFile = new File(getFilesDir().toString() + "/statechart.apk");
+    //cancels an alarm based on id
+    public void cancelAlarm(int id) {
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, Receiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id, intent, 0);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
+    }
 
-        //if file doesn't exist create the file
-        if (!localFile.exists()) {
-            //initialise the class loader, for dynamic class loading
-            DexClassLoader cl = new DexClassLoader(localFile.getAbsolutePath().toString(), getFilesDir().getAbsolutePath().toString(), null, getClassLoader());
+    //gets the current weather code from yahoo
+    public static int getCurrentWeatherCode() {
+        return condition.getCode();
+    }
 
-            //loads the statechart classes
-            Class<Object> defaultSMStatemachine = null;
-            Class<Object> iDefaultSMStatemachine = null;
-            Class<Object> iStatemachine = null;
-            try {
-                defaultSMStatemachine = (Class<Object>) cl.loadClass("ateam.defaultSMStatemachine");
-                iDefaultSMStatemachine = (Class<Object>) cl.loadClass("ateam.iDefaultSMStatemchine");
-                iStatemachine = (Class<Object>) cl.loadClass("ateam.iStatemchine");
-            } catch (ClassNotFoundException e) {
-                Log.e("LandingPage", "statechart classes weren't loaded");
-                e.printStackTrace();
-            }
+    //gets the name of the weather code
+    public static String getCurrentWeather() {
+        return condition.getDescription();
+    }
 
-            //attempts to instanciate the statechart objects
-            Object defaultInstance = null;
-            Object iDefaultInstance = null;
-            Object iStatemachineInstance = null;
-            try {
-                defaultInstance = defaultSMStatemachine.newInstance();
-                iDefaultInstance = iDefaultSMStatemachine.newInstance();
-                iStatemachineInstance = iStatemachine.newInstance();
-            } catch (InstantiationException e) {
-                Log.e("LandingPage", "Couldn't instantiate statechart objects");
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                Log.e("LandingPage", "Illegal access, statechart objects weren't created");
-                e.printStackTrace();
-            }
+    //necessary service to get the weather
+    @Override
+    public void serviceSuccess(Channel channel) {
+        condition = channel.getItem().getCondition();
+    }
 
-            //access fields and methods
-//            Field field = null;
-//            try {
-//                field = defaultSMStatemachine.getDeclaredField("store");
-//            } catch (NoSuchFieldException e) {
-//                e.printStackTrace();
-//            }
-//            field.setAccessible(true);
-//            String value = "replace";
-//            try {
-//                value = (String) field.get(instance);
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-        }
+    @Override
+    public void serviceFailure(Exception exception) {
+        Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
     }
 }

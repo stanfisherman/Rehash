@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        tools:context="ateam.rehashprot2.AddEventActivity">
+
+        <EditText
+            android:id="@+id/add_event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start" />
+
+            <Button
+                android:layout_toLeftOf="@+id/add_event_start_time"
+                android:id="@+id/add_event_start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01/01/2016"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:layout_alignParentRight="true"
+                android:id="@+id/add_event_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:background="@android:color/transparent"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End" />
+
+            <Button
+                android:layout_toLeftOf="@+id/add_event_end_time"
+                android:id="@+id/add_event_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01/01/2016"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:layout_alignParentRight="true"
+                android:id="@+id/add_event_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:background="@android:color/transparent"/>
+
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/add_event_description"
+            android:hint="Description"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|left"
+            android:inputType="textMultiLine"
+            android:lines="8"
+            android:maxLines="10"
+            android:minLines="6"
+            android:scrollbars="vertical" />
+
+        <Button
+            android:id="@+id/add_event_button"
+            android:text="@string/make_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</ScrollView>

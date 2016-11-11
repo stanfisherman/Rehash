@@ -2,7 +2,6 @@ package ateam.rehashprot2;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,18 +44,20 @@ public class ListViewFragment extends Fragment {
     private boolean isMedModOn = false;
     private boolean isActModOn = false;
 
+    //creates an array of the module parameters
     private ArrayList<String> modules = new ArrayList();
     private ArrayList<String> description = new ArrayList();
     private ArrayList<Integer> icon_id = new ArrayList();
 
+    //sets up the statechart for instanciation
     private boolean isState = false;
     private Class<Object> defaultSMStatemachine;
-    private Class<Object> iDefaultSMStatemachine;
-    private Class<Object> iStatemachine;
-    private Object defaultInstance;
-    private Object iDefaultInstance;
-    private Object iStatemachineInstance;
+
+    //variables for the management of the activity
     private Boolean status = false;
+    private Boolean setUp = false;
+    private ProgressBar mProgress;
+    private int mProgressStatus = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -68,30 +70,12 @@ public class ListViewFragment extends Fragment {
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        //Set up handling of statechart download and set up
-        new SetUpStatechart().execute();
+        mProgress = (ProgressBar) getActivity().findViewById(R.id.progress);
+        mProgress.setVisibility(View.VISIBLE);
+        mProgress.setProgress(mProgressStatus);
 
-        CustomAdapter adapter = new CustomAdapter(this.getActivity(), R.layout.module_row, modules, description, icon_id);
-        final ListView lpListView = (ListView) view.findViewById(R.id.list_categories);
-        lpListView.setAdapter(adapter);
-        lpListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                DetailsFragment df = new DetailsFragment();
-                int pos = lpListView.getPositionForView(view);
-                Bundle args = new Bundle();
-                // args.putInt("Position", pos);
-                args.putString("Title", modules.get(pos));
-                args.putString("Description", description.get(pos));
-                args.putInt("Icon", icon_id.get(pos));
-                df.setArguments(args);
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.fragment_frame_layout, df);
-                ft.addToBackStack(null);
-                ft.commit();
-            }
-        });
+        //starts download and sets up statecharts in a seperate thread
+        new SetUpStatechart().execute();
     }
 
     /*
@@ -137,10 +121,9 @@ public class ListViewFragment extends Fragment {
      */
     public void readStates(int x) {
         String state = "";
-        while (x < states.length) {
+        while (x < states.length - 1) {
             state = statesArray.get(x);
             String[] words = state.split("\\s+");
-
             for (int i = 0; i < words.length; i++) {
                 for (String temp : medWords) {
                     if (words[i].equals(temp) && !isMedModOn)
@@ -158,17 +141,43 @@ public class ListViewFragment extends Fragment {
     //MODULES HERE
     //Medicine Module
     public void callMedicineModule() {
-        modules.add("Test if it works");
-        description.add("Don't forget to take your medicine");
-        icon_id.add(R.drawable.pill);
+        modules.add("Medicine");
+        description.add("Don't forget to take your medicine!");
+        icon_id.add(R.drawable.ic_action_name);
         isMedModOn = true;
     }
 
     public void callExerciseModule() {
-        modules.add("Exercise at this time");
-        description.add("Go for a walk at this time");
-        icon_id.add(R.drawable.exercise);
+        modules.add("Exercise");
+        description.add("Don't forget to do your daily exercise!");
+        icon_id.add(R.drawable.ic_action_exercise);
         isActModOn = true;
+    }
+
+    public void createListViews(View view) {
+        //adapter showing list view of modules
+        CustomAdapter adapter = new CustomAdapter(this.getActivity(), R.layout.module_row, modules, description, icon_id);
+        final ListView lpListView = (ListView) view.findViewById(R.id.list_categories);
+        lpListView.setAdapter(adapter);
+        //creates a fragment based on which module was clicked
+        lpListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            int pos = lpListView.getPositionForView(view);
+            DetailsFragment df = new DetailsFragment();
+            Bundle args = new Bundle();
+            args.putString("Title", modules.get(pos));
+            args.putString("Description", description.get(pos));
+            args.putInt("Icon", icon_id.get(pos));
+            args.putInt("Id", pos);
+            df.setArguments(args);
+            ft.replace(R.id.fragment_frame_layout, df, modules.get(pos));
+            ft.addToBackStack(modules.get(pos));
+            ft.commit();
+            }
+        });
     }
 
     public Boolean getStatechart() {
@@ -192,7 +201,7 @@ public class ListViewFragment extends Fragment {
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
+                    public void onFailure(Exception exception) {
                         localFile.delete();
                         status = false;
                         Log.e("getStatechart()", "File download failed");
@@ -232,25 +241,23 @@ public class ListViewFragment extends Fragment {
         for (Class s: statesInnerClass) {
             //gets the enum constants in the enum inner class of statemachine
             Object[] constants = s.getEnumConstants();
-            //creates a new array of constants[] length to convert to String[]
+            //creates the state instance
             states = new String[constants.length];
             //store constant[] values as string in states[]
             for (int i = 0; i < constants.length - 1; ++i) {
-                states[i] =  constants[i].toString();
-                Log.e("InstanciateStatechart()", "" + i);
-                Log.e("InstanciateStatechart()", states[i]);
+                states[i] = constants[i].toString();
             }
         }
     }
 
-    class SetUpStatechart extends AsyncTask<Void, Void, Void>{
+    class SetUpStatechart extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             getStatechart();
             //waits for download to complete before proceeding
             while (status != true) {
             }
-            Log.e("download", "doInBackground complete");
+            Log.e("download", "doInBackground download complete");
             return null;
         }
 
@@ -263,10 +270,12 @@ public class ListViewFragment extends Fragment {
             // Setup any handles to view objects here
             createStateStringArray();
             // Read the states and look for the keywords and decide which modules are to be accessed
-            readStates(states.length);
+            readStates(0);
+            setUp = true;
+            mProgressStatus = 100;
+            mProgress.setVisibility(View.GONE);
+            createListViews(getView());
             Log.e("download", "onPostExecute complete");
         }
-
     }
-
 }

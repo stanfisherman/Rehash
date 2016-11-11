@@ -15,13 +15,9 @@
             android:icon="@drawable/ic_menu_weather"
             android:title="Weather" />
         <item
-            android:id="@+id/nav_alarm"
-            android:icon="@drawable/ic_menu_alarm"
-            android:title="Alarm" />
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_settings"
-            android:title="Settings" />
+            android:id="@+id/nav_logout"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="Logout" />
     </group>
 
 
